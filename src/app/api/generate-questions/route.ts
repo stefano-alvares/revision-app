@@ -11,23 +11,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.OPENROUTER_API_KEY
     
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
+        { error: 'OpenRouter API key not configured' },
         { status: 500 }
       )
     }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://revision-app.local',
+        'X-Title': 'Revision App',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'tngtech/deepseek-r1t-chimera:free',
         messages: [
           {
             role: 'system',
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       return NextResponse.json(
-        { error: 'OpenAI API request failed', details: errorData },
+        { error: 'OpenRouter API request failed', details: errorData },
         { status: response.status }
       )
     }
@@ -56,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     if (!content) {
       return NextResponse.json(
-        { error: 'No content received from OpenAI' },
+        { error: 'No content received from OpenRouter' },
         { status: 500 }
       )
     }

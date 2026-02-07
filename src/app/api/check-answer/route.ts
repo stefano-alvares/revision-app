@@ -11,11 +11,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.OPENROUTER_API_KEY
     
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
+        { error: 'OpenRouter API key not configured' },
         { status: 500 }
       )
     }
@@ -53,14 +53,19 @@ Respond in JSON format:
 
 Be encouraging but accurate in your assessment.`
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://revision-app.local',
+        'X-Title': 'Revision App',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'tngtech/deepseek-r1t-chimera:free',
         messages: [
           {
             role: 'system',
@@ -72,12 +77,15 @@ Be encouraging but accurate in your assessment.`
         temperature: 0.3,
         max_tokens: 500,
       }),
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       return NextResponse.json(
-        { error: 'OpenAI API request failed', details: errorData },
+        { error: 'OpenRouter API request failed', details: errorData },
         { status: response.status }
       )
     }
@@ -87,7 +95,7 @@ Be encouraging but accurate in your assessment.`
 
     if (!content) {
       return NextResponse.json(
-        { error: 'No content received from OpenAI' },
+        { error: 'No content received from OpenRouter' },
         { status: 500 }
       )
     }
@@ -106,6 +114,15 @@ Be encouraging but accurate in your assessment.`
 
   } catch (error) {
     console.error('Error in check-answer API:', error)
+    
+    // Handle timeout specifically
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json(
+        { error: 'Request timeout - please try again' },
+        { status: 408 }
+      )
+    }
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

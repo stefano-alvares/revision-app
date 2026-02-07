@@ -17,7 +17,7 @@ An intelligent revision app that helps students generate personalized practice q
 ### Prerequisites
 
 1. Node.js 18+ installed
-2. OpenAI API key (for question generation)
+2. OpenRouter API key (for question generation)
 
 ### Installation
 
@@ -35,7 +35,7 @@ npm install
 3. Set up environment variables:
 Create a `.env.local` file in the root directory and add:
 ```
-OPENAI_API_KEY=your_openai_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 4. Run the development server:
@@ -81,14 +81,14 @@ src/
 - **Styling**: Tailwind CSS
 - **UI Components**: Radix UI primitives
 - **Icons**: Lucide React
-- **AI**: OpenAI GPT-4 API
+- **AI**: OpenRouter API with DeepSeek models (R1T Chimera, R1 0528)
 
 ## Environment Variables
 
 Create a `.env.local` file with the following variables:
 
 ```
-OPENAI_API_KEY=your_openai_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 ## Learn More
@@ -98,7 +98,7 @@ To learn more about the technologies used:
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Tailwind CSS](https://tailwindcss.com) - utility-first CSS framework
 - [Radix UI](https://www.radix-ui.com/) - low-level UI primitives
-- [OpenAI API](https://platform.openai.com/docs) - AI integration
+- [OpenRouter API](https://openrouter.ai/docs) - AI integration with free models
 
 ## Deploy on Vercel
 
